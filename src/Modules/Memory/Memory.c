@@ -12,6 +12,8 @@
 //
 
 //  Macros for seting allocators for furure changes
+//      Future allocators need to match the format
+//      of default c allocator for input/functionality
 
 #define Alloc_New malloc
 #define Alloc_Free free
@@ -67,4 +69,12 @@ void Mem_Expand(DynMem* memory){
 
 //Checks status of DynMem to see whats going on
 
-Mem_Status_Codes
+Mem_Status_Code Mem_Status(DynMem* memory){
+    if(memory->allocted >= (size_t) memory->size * 0.75){
+        return Mem_Full;
+    }else if (memory->allocted > memory->size) {
+        return Mem_OverFlow;
+    }else{
+        return Mem_Normal;
+    }
+}

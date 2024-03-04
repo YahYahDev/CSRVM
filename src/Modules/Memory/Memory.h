@@ -13,20 +13,52 @@
 
     }DynMem;
 
+
     typedef enum{
 
-        Full,
+        Mem_Full,
 
-        OverFlow,
+        Mem_OverFlow,
 
-        Normal
+        Mem_Normal
 
-    }Mem_Status_Codes;
+    }Mem_Status_Code;
 
+
+    /*  Returns a new memory object
+     *
+    */
     DynMem Mem_New(size_t size);
 
+
+    /*  Frees a memory object
+     *
+    */
     void Mem_Free(DynMem* memory);
 
+
+    /*  Reallocs memory
+     *
+     *  memory.size = memory.size * 1.5
+     *
+     *  if Mem_Expand fails it sets
+     *
+     *  memory = {
+     *
+     *      .data = NULL,
+     *
+     *      .size = 0,
+     *
+     *      .amount = 0
+     *  }
+    */
     void Mem_Expand(DynMem* memory);
+
+
+    /*
+     *
+    */
+    Mem_Status_Code Mem_Status(DynMem* memory);
+
 
 #endif
