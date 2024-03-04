@@ -1,1 +1,56 @@
 Implement a instruction set for the VM
+
+
+type instruction(data, data)
+
+
+Types:
+
+    int8-64
+    uint8-64
+
+    float16-64
+
+    pointer
+
+    nil  // No data
+
+    bool // true/false
+
+
+Instructions:
+
+    Add(data, data)
+
+    /*  Add data + data */
+
+    Sub(data, data)
+    /*  Subtract data - data  */
+
+    Mul(data, data)
+
+    /*  Multiply data * data  */
+
+    Div(data, data)
+
+    /*  Divide data / data  */
+
+    Rem(data, data)
+
+    /*  Get the remaner of data / data  */
+
+    StackPush(data, stack)
+
+    /*  Push data to stack  */
+
+    StackPull(stack)
+
+    /*  Pull first data on stack  */
+
+    RegiPush(data, register)
+
+    /*  Push data to register  */
+
+    RegiPull(register)
+
+
