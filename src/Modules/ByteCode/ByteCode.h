@@ -69,17 +69,31 @@ typedef enum{
     /*  Logic Commands
      *
     */
-    Command_Compare,
+    Command_Equal,
+
+    Command_Greater,
 
 
 }Code_Command;
 
+
+/*  Instruction Struct
+ *
+ *      Used to store instruction for excution stack
+ *
+*/
 typedef struct{
 
+    //  Stores the type that the instruction
+    //  will be acting on
     Code_Type type;
 
+
+    //  Stores the instruction that will be executed
     Code_Command instrustion;
 
+
+    //  Stores a pointer to the pointers used for data
     void* data[];
 
 
