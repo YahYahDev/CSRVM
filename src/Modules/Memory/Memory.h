@@ -27,8 +27,8 @@
  *  if it fails to resize then it will exit(1)
 */
 #define DynAlloc(Name) \
-    Mem_Expand(Mem_##Name); \
-    if(Mem_##Name.data == NULL) exit(1);/
+    Mem_Expand(&Mem_##Name); \
+    if(Mem_##Name.data == NULL) exit(1); \
 
 
 /*  DynFree(Name)
@@ -36,9 +36,24 @@
  *  Runs Mem_Free(Mem_Name);
 */
 #define DynFree(Name) \
-        Mem_Free(Mem_##Name);\
+        Mem_Free(&Mem_##Name);\
 
 
+/* DynHandle(Name)
+ *
+*/
+#define DynHandle(Name) \
+        switch(Mem_Status(&Mem_##Name)){ \
+            case Mem_Full: \
+                Mem_Expand(&Mem_##Name); \
+                if(Mem_##Name.data == NULL) exit(1);\
+                break; \
+            case Mem_OverFlow: \
+                exit(1) \
+                break; \
+            case Mem_Normal: \
+                break; \
+        } \
 
 
     typedef struct{
