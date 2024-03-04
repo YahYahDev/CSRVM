@@ -5,6 +5,17 @@ parse = require("lua.Modules.Parse")
 
 
 --[[
+    TODO:
+
+        1): Make static/dynamic librarys link automaticly to the best of my ability
+
+        2): Adapt the script to work on windows/linux maby macos eventualy
+
+        3): Add incremental building to speed up build proccese
+]]
+
+
+--[[
     Lua C Build System, aka "LCBS" is a automatic build system.
 
     as long as you follow the following format for your file structure
@@ -86,6 +97,8 @@ if CMDModDirs ~= CMDBinDirs then
 end
 
 
+--SRC:
+
 --[[
     Stores a tree of key value pair arrays of whats in each ./src/Modules/? directorys
 
@@ -132,15 +145,48 @@ for key in pairs(ModDirSrcs)  do
 end
 
 
+--BIN:
+
 --[[
+    Set BinObjects to the same as ModDirSrcs
+    because they will both have the same tree
+
+]]
+local BinObjects = ModDirSrcs
+
+--Initialize a string to concat into all the .o files
+local ObjectList = ""
 
 
+--[[
+    Constructs a series of paths to the .o files in
+    ./bin/Modules/?/?.o so that we can use it in the final command
 
 
 ]]
+for key in pairs(BinObjects)do
+
+    for i = 1, #BinObjects[key] do
+        ObjectList = str.Merge(ObjectList, "./bin/Modules/".. key .."/".. BinObjects[key][i] ..".o ")
+    end
+
+end
+
+--COMPILE:
 
 
+--[[
+    Builds the executable from ObjectList
 
+    this is the final build command
 
+    if you would like to add any compile arguments
+    please read the documention above to figure out
+    how the system works so you dont break it
+]]
+print("Building Executable: ")
+os.execute(Compiler .." ./src/main.c ".. ObjectList .."-o ./bin/out")
 
+print("Running Program: ")
+os.execute("./bin/out")
 
