@@ -2,6 +2,44 @@
 #define Memory_H
 
 #include <stdlib.h>
+#include <assert.h>
+
+
+/*  DynAlloc(Type, Name, Size)
+ *
+ *  makes a DynMem object called Mem_Name
+ *
+ *  makes a handle to the memory on the object
+ *  called Name
+ *
+ *  if the allocation fails exit(1)
+*/
+#define DynNew(Type, Name, Size) \
+    DynMem Mem_##Name = Mem_New(sizeof(Type) * 5);\
+    Type* Name = (Type*)Mem_##Name->data;\
+    if(Mem_##Name.data == NULL) exit(1);\
+
+
+/*  DynAlloc(Name)
+ *
+ *  Runs the Mem_Expand() on the MEM_Name object
+ *
+ *  if it fails to resize then it will exit(1)
+*/
+#define DynAlloc(Name) \
+    Mem_Expand(Mem_##Name); \
+    if(Mem_##Name.data == NULL) exit(1);/
+
+
+/*  DynFree(Name)
+ *
+ *  Runs Mem_Free(Mem_Name);
+*/
+#define DynFree(Name) \
+        Mem_Free(Mem_##Name);\
+
+
+
 
     typedef struct{
 
@@ -55,8 +93,15 @@
     void Mem_Expand(DynMem* memory);
 
 
-    /*
+    /*  Returns any status codes on memory
      *
+     *  Can be
+     *
+     *      Mem_Normal
+     *
+     *      Mem_Full
+     *
+     *      Mem_OverFlow
     */
     Mem_Status_Code Mem_Status(DynMem* memory);
 

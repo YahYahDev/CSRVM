@@ -60,9 +60,6 @@ void Mem_Expand(DynMem* memory){
     memory->data = Alloc_Expand(memory->data, (size_t)memory->size * 1.5);
     if(memory->data != NULL){
         memory->size = (size_t) memory->size * 1.5;
-    }else{
-        memory->size = 0;
-        memory->allocted = 0;
     }
 }
 
