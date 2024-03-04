@@ -16,7 +16,7 @@
 */
 #define DynNew(Type, Name, Size) \
     DynMem Mem_##Name = Mem_New(sizeof(Type) * Size);\
-    Type* Name = (Type*)Mem_##Name->data;\
+    Type* Name = (Type*)Mem_##Name.data;\
     if(Mem_##Name.data == NULL) exit(1);\
 
 
