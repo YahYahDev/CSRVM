@@ -139,7 +139,7 @@ for key in pairs(ModDirSrcs)  do
 
     for i = 1, #ModDirSrcs[key] do
         print("  ".. ModDirSrcs[key][i]..".c")
-        os.execute(Compiler .." -c ".."./src/Modules/".. key .."/".. ModDirSrcs[key][i] ..".c -o ./bin/Modules/"..key.."/".. ModDirSrcs[key][i].. ".o")
+        os.execute(Compiler .." -c ".."./src/Modules/".. key .."/".. ModDirSrcs[key][i] ..".c -o ./bin/Modules/"..key.."/".. ModDirSrcs[key][i].. ".o -Wall -Wextra")
 
     end
 end
@@ -185,7 +185,7 @@ end
     how the system works so you dont break it
 ]]
 print("Building Executable: ")
-os.execute(Compiler .." ./src/main.c ".. ObjectList .."-o ./bin/out")
+os.execute(Compiler .." ./src/main.c ".. ObjectList .."-o ./bin/out -Wall -Wextra")
 
 print("Running Program: ")
 os.execute("./bin/out")

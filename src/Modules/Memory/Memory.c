@@ -1,72 +1,70 @@
 #include "Memory.h"
+#include <stdlib.h>
 
 
-DynMemory AllocMemory(size_t Size){
+//  TODO:
+//
+//      1): Make a SubAllocator for memory so we minimize
+//          the amount of calls to the Os for memory
+//
+//      2): Make Arenas that you can get from the pool of memory
+//
+//
 
-    /* AllocMemory(size_t Amount)
+//  Macros for seting allocators for furure changes
 
-        if alloc is successful then Mem.size = Amount
-            Otherwise Mem.size = 1 for errors
+#define Alloc_New malloc
+#define Alloc_Free free
+#define Alloc_Expand realloc
 
-    */
 
-    DynMemory Mem;
+//Allocates a new DynMem object for memory
+DynMem Mem_New(size_t size){
 
-    Mem.data = malloc(Size);
+    DynMem memory = {
 
-    Mem.size = Size;
+        .data = Alloc_New(size),
 
-    return Mem;
+        .size = size,
+
+        .allocted = 0
+    };
+
+    return memory;
+
 }
 
 
-int ReallocMemory(DynMemory* Memory){
+//Frees a DynMem object from memory
+void Mem_Free(DynMem* memory){
 
-    /*  Reallocates a DynMemory with 50% more space
+    if(memory->data != NULL){
 
-        if realloc() fails then we return 1
-            otherwise we return 0.
+        Alloc_Free(memory->data);
 
-    */
-    void* old = Memory->data;
+        memory->data = NULL;
 
-    Memory->data = realloc(Memory->data, (size_t)Memory->size * 1.5);
+        memory->allocted = 0;
 
-    if(Memory->data == old){
-        return 1;
-    }else{
+        memory->size = 0;
 
-        Memory->size = (size_t) Memory->size * 1.5;
-
-    return 0;
     }
 }
 
 
-int FreeMemory(DynMemory* Memory){
+//Reallocates more memory to DynMem object
+void Mem_Expand(DynMem* memory){
 
-    /*  Frees DynMemory
-
-        If Memory->data is not NULL free Memor->data
-            And return 0
-        else
-            return 1
-
-    */
-    if(Memory->data != NULL){
-
-        free(Memory->data);
-
-        Memory->data = NULL;
-
-        Memory->size = 0;
-
-        return 0;
+    memory->data = Alloc_Expand(memory->data, (size_t)memory->size * 1.5);
+    if(memory->data != NULL){
+        memory->size = (size_t) memory->size * 1.5;
     }else{
-
-        return 1;
+        memory->size = 0;
+        memory->allocted = 0;
     }
-
 }
 
 
+//Checks status of DynMem to see whats going on
+
+Mem_Status_Codes

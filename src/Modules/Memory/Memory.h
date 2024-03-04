@@ -1,28 +1,32 @@
+#ifndef Memory_H
+#define Memory_H
+
 #include <stdlib.h>
 
+    typedef struct{
 
-typedef struct{
+        void* data;
 
-    void* data;
+        size_t allocted;
 
-    size_t size;
+        size_t size;
 
+    }DynMem;
 
-}DynMemory;
+    typedef enum{
 
+        Full,
 
-/*
+        OverFlow,
 
-*/
-DynMemory AllocMemory(size_t Size);
+        Normal
 
-int ReallocMemory(DynMemory* Memory);
+    }Mem_Status_Codes;
 
-int FreeMemory(DynMemory* Memory);
+    DynMem Mem_New(size_t size);
 
-#define Alloc(Name, Size, Type) \
-        DynMemory Name = AllocMemory(Size * sizeof(Type)); \
-        if(Name.data == NULL){ \
-            return 1; \
-        } \
+    void Mem_Free(DynMem* memory);
 
+    void Mem_Expand(DynMem* memory);
+
+#endif
