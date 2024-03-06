@@ -2,17 +2,74 @@
 
 #define ByteCode_H
 
-/*  ByteCode types
+#include <stdint.h>
+
+
+#define ByteCode_Case(Code)
+
+
+/*  ByteCode_Inst
  *
- *      Used to describe types of values in bytecode
+ *      ByteCode instructions for the VM
  *
- *  TODO:
+ *      (X): Math
  *
- *      1): Add floats
+ *      (X): Stack
  *
- *      2): Add chars
+ *
 */
-typedef enum{
+
+typedef enum : int_fast8_t{
+
+    /*  Math Operations
+     *
+    */
+
+    Inst_Add,
+
+    Inst_Sub,
+
+    Inst_Mul,
+
+    Inst_Div,
+
+    Inst_Mod,
+
+
+    /*  Stack Operations
+     *
+    */
+
+    Inst_StackPush,
+
+    Inst_StackPop,
+
+    /*  Register Opterations
+     *
+    */
+
+    Inst_RegiPush,
+
+    Inst_RegiPop,
+
+
+}ByteCode_Inst;
+
+/*  ByteCode_Type
+ *
+ *      (X): Int8 - Int64
+ *
+ *      (): uInt8 - uInt64
+ *
+ *      (): Float8 - Float64
+ *
+ *      (): Char
+*/
+typedef enum : int_fast8_t{
+
+    Type_Nil,
+
+    Type_Bool,
 
     Type_Int8,
 
@@ -22,82 +79,37 @@ typedef enum{
 
     Type_Int64,
 
-    Type_UInt8,
-
-    Type_UInt16,
-
-    Type_UInt32,
-
-    Type_UInt64,
+}ByteCode_Type;
 
 
-}Code_Type;
-
-
-typedef enum{
-
-    /*  Stack Commands
-     *
-    */
-    Command_Stack_Push,
-
-    Command_Stack_Pop,
-
-
-    /*  Register Commands
-     *
-    */
-    Command_Register_Push,
-
-    Command_Register_Pop,
-
-
-    /*  Arithmatic Commands
-     *
-    */
-    Command_Add,
-
-    Command_Sub,
-
-    Command_Mul,
-
-    Command_Div,
-
-    Command_Mod,
-
-
-    /*  Logic Commands
-     *
-    */
-    Command_Equal,
-
-    Command_Greater,
-
-
-}Code_Command;
-
-
-/*  Instruction Struct
+/*  ByteCode Chunk
  *
- *      Used to store instruction for excution stack
+ *      Used to store execution instructions
+ *
+ *      Will be used in the instruction stack
+*/
+typedef struct{
+
+
+    ByteCode_Type type;
+
+    ByteCode_Inst instruction;
+
+
+}ByteCode_Chunk;
+
+
+/*  ByteCode_Data
+ *
+ *      Used to store data in the data stack
  *
 */
 typedef struct{
 
-    //  Stores the type that the instruction
-    //  will be acting on
-    Code_Type type;
+    ByteCode_Type type;
 
+    void* data;
 
-    //  Stores the instruction that will be executed
-    Code_Command instrustion;
-
-
-    //  Stores a pointer to the pointers used for data
-    void* data[];
-
-
-}Code_Instruction;
-
+}ByteCode_Data;
 
 #endif

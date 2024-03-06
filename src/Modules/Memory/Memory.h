@@ -13,6 +13,11 @@
  *  called Name
  *
  *  if the allocation fails exit(1)
+ *
+ *  NOTE:
+ *
+ *      The memory object is limmited to the scope
+ *      at creation.
 */
 #define DynNew(Type, Name, Size) \
     DynMem Mem_##Name = Mem_New(sizeof(Type) * Size);\
@@ -56,6 +61,12 @@
         } \
 
 
+    /*  DynMem
+    *
+    *  a data structure to keep track of and manage
+    *  memory allocation dynamicly with macros
+    *
+    */
     typedef struct{
 
         void* data;
@@ -67,6 +78,11 @@
     }DynMem;
 
 
+    /*  Mem_Status_Code
+    *
+    *  a enum to determine any memory errors
+    *
+    */
     typedef enum{
 
         Mem_Full,
@@ -80,6 +96,7 @@
 
     /*  Returns a new memory object
      *
+     *  if it fails the DynMem.data = NULL
     */
     DynMem Mem_New(size_t size);
 
