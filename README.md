@@ -1,28 +1,26 @@
-# CSRVM
-A virtual machine that is written in c,
+# Portable Virtual Machine
+
+A virtual machine that is written in c.
+
+this virtual machine is intended to be used as a backend for any language
+that may want to compile to it.
+
+in the future i may make a transpiler to x86_64 for this virtual machines bytecode
+but for now im just making the virtual machine.
 
 
 # TODO:
 
-    1): Make a instruction set
+    1): Make Working Memory Module
 
-        Requirements:
+    2): Make Working Stack Module
 
-            1): All instructions need to be 1 byte
-
-            2): Must be simple/human readable
+    3): Make Instruction Set For Bytecode
 
 
-    2): Make a Interpreter for the instruction set
+# GOALS:
 
-        Requirements:
+    1): Make A Portable Development Enviroment That Is Cross Platform
+        With Near Assembly Bytecode
 
-            1): No garbage collection built into the interpeter
-
-            2): Must be able to extent interpreter
-
-            3): Must allow for C like control of memory
-
-            4): Must be fast
-
-    3): Optimize Interpreter
+    2): Make A
