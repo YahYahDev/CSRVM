@@ -76,7 +76,7 @@ typedef struct{
 
 	void* data;
 
-	size_t ptr;
+	size_t filled;
 
 	size_t capacity;
 
@@ -93,4 +93,9 @@ void Arena_Resize(Arena* arena, size_t new_size);
 
 
 void* Arena_Alloc(Arena* arena, size_t amount);
+
+
+void Arena_Clean(Arena* arena);
+
+
 #endif
