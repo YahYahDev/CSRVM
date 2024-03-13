@@ -2,140 +2,95 @@
 #define Memory_H
 
 #include <stdlib.h>
-#include <assert.h>
+#include <stdio.h>
 
 
-/*  DynAlloc(Type, Name, Size)
+/*	README
  *
- *  makes a DynMem object called Mem_Name
+ *	if you need malloc like behavior use the Heap.
  *
- *  makes a handle to the memory on the object
- *  called Name
- *
- *  if the allocation fails exit(1)
- *
- *  NOTE:
- *
- *      The memory object is limmited to the scope
- *      at creation.
-*/
-#define DynNew(Type, Name, Size) \
-    DynMem Mem_##Name = Mem_New(sizeof(Type) * Size);\
-    Type* Name = (Type*)Mem_##Name.data;\
-    if(Mem_##Name.data == NULL) exit(1);\
-
-
-/*  DynAlloc(Name)
- *
- *  Runs the Mem_Expand() on the MEM_Name object
- *
- *  if it fails to resize then it will exit(1)
-*/
-#define DynAlloc(Name) \
-    Mem_Expand(&Mem_##Name); \
-    if(Mem_##Name.data == NULL) exit(1); \
-
-
-/*  DynFree(Name)
- *
- *  Runs Mem_Free(Mem_Name);
-*/
-#define DynFree(Name) \
-        Mem_Free(&Mem_##Name);\
-
-
-/* DynHandle(Name)
+ *	if you need to allocate somthing on a per loop cycle
+ *	basis you might want to use an arena, they are faster
+ *	and more memory effiecient in some cases.
  *
 */
-#define DynHandle(Name) \
-        switch(Mem_Status(&Mem_##Name)){ \
-            case Mem_Full: \
-                Mem_Expand(&Mem_##Name); \
-                if(Mem_##Name.data == NULL) exit(1);\
-                break; \
-            case Mem_OverFlow: \
-                exit(1) \
-                break; \
-            case Mem_Normal: \
-                break; \
-        } \
 
 
-    /*  DynMem
-    *
-    *  a data structure to keep track of and manage
-    *  memory allocation dynamicly with macros
-    *
-    */
-    typedef struct{
-
-        void* data;
-
-        size_t allocted;
-
-        size_t size;
-
-    }DynMem;
 
 
-    /*  Mem_Status_Code
-    *
-    *  a enum to determine any memory errors
-    *
-    */
-    typedef enum{
+/*	Heap Allocator
+ *
+ *	A allocator similar to malloc
+ *
+*/
 
-        Mem_Full,
+typedef struct{
 
-        Mem_OverFlow,
+	void* data;
 
-        Mem_Normal
+	size_t size;
 
-    }Mem_Status_Code;
-
-
-    /*  Returns a new memory object
-     *
-     *  if it fails the DynMem.data = NULL
-    */
-    DynMem Mem_New(size_t size);
+}_Mem_Blocks;
 
 
-    /*  Frees a memory object
-     *
-    */
-    void Mem_Free(DynMem* memory);
+typedef struct{
+
+	void* data;
+
+	size_t filled;
+
+	size_t capacity;
 
 
-    /*  Reallocs memory
-     *
-     *  memory.size = memory.size * 1.5
-     *
-     *  if Mem_Expand fails it sets
-     *
-     *  memory = {
-     *
-     *      .data = NULL,
-     *
-     *      .size = 0,
-     *
-     *      .amount = 0
-     *  }
-    */
-    void Mem_Expand(DynMem* memory);
+	/* Tracks how many memory allocations */
+	size_t allocations;
+	/* Holds the values of "Free" blocks */
+	_Mem_Blocks* blocks;
+
+}Heap;
 
 
-    /*  Returns any status codes on memory
-     *
-     *  Can be
-     *
-     *      Mem_Normal
-     *
-     *      Mem_Full
-     *
-     *      Mem_OverFlow
-    */
-    Mem_Status_Code Mem_Status(DynMem* memory);
+Heap Heap_New(size_t size);
 
 
+void Heap_Free(Heap* heap);
+
+
+void Heap_Resize(Heap* heap, size_t new_size);
+
+
+void* Heap_Alloc(Heap* heap, size_t amount);
+
+
+void Heap_Debug(Heap* heap);
+
+
+
+
+/*	Arena Allocator
+ *
+ *	Basicly a bump allocator
+ *	that can be reset easy
+*/
+typedef struct{
+
+	void* data;
+
+	size_t ptr;
+
+	size_t capacity;
+
+}Arena;
+
+
+Arena Arena_New(size_t size);
+
+
+void Arena_Free(Arena* arena);
+
+
+void Arena_Resize(Arena* arena, size_t new_size);
+
+
+void* Arena_Alloc(Arena* arena, size_t amount);
 #endif

@@ -1,77 +1,101 @@
 #include "Memory.h"
-#include <stdlib.h>
+/* ALLOCATION MACROS */
+
+/*	These are to be used to swap out
+ *	what ever allocator you want to use
+ *
+ * 	NOTE:
+ * 		these will be undefined at the end of the file
+ * 		and are not global scope macros
+*/
+#define MemAlloc(size) malloc(size)
+
+#define MemFree(ptr) free(ptr)
+
+#define MemResize(ptr, size) realloc(ptr, size)
 
 
-//  TODO:
-//
-//      1): Make a SubAllocator for memory so we minimize
-//          the amount of calls to the Os for memory
-//
-//      2): Make Arenas that you can get from the pool of memory
-//
-//
-
-//  Macros for seting allocators for furure changes
-//      Future allocators need to match the format
-//      of default c allocator for input/functionality
-
-#define Alloc_New malloc
-#define Alloc_Free free
-#define Alloc_Expand realloc
 
 
-//Allocates a new DynMem object for memory
-DynMem Mem_New(size_t size){
 
-    DynMem memory = {
 
-        .data = Alloc_New(size),
+Heap Heap_New(size_t size){
 
-        .size = size,
+	/*	Initializes a heap object;
+	 *
+	 *	heap.data holds a pointer to
+	 *	memory
+	 *
+	 *	heap.filled is used to keep track
+	 *	of how much of the heap has been used
+	 *	and where the next allocation should be
+	 *	*assuming allocations are linear*
+	 *
+	 *	heap.capacity is used to keep track
+	 *	of max size the heap can hold
+	*/
+	Heap heap;
 
-        .allocted = 0
-    };
+	heap.data = MemAlloc(size);
 
-    return memory;
+	heap.capacity = size;
+
+	heap.filled = 0;
+
+	return heap;
+}
+
+
+void Heap_Free(Heap* heap){
+	/*	Frees heap.data
+	 *  sets .filled, .capacity to 0
+	 * 	and .data to NULL
+	*/
+	free(heap->data);
+	heap->data = NULL;
+	heap->filled = 0;
+	heap->capacity = 0;
+}
+
+
+void Heap_Resize(Heap* heap, size_t new_size){
+	/*	Calls realloc() to resize the heap
+	*/
+	heap->data = MemResize(heap->data, new_size);
+
+	heap->capacity = new_size;
 
 }
 
 
-//Frees a DynMem object from memory
-void Mem_Free(DynMem* memory){
-
-    if(memory->data != NULL){
-
-        Alloc_Free(memory->data);
-
-        memory->data = NULL;
-
-        memory->allocted = 0;
-
-        memory->size = 0;
-
-    }
+void* Heap_Alloc(Heap* heap, size_t amount){
+	/*	Returns a void* to a spot in the heap
+	 *	for memory allocation
+	 *
+	 *	if the heap is full returns NULL
+	*/
+	if(heap->filled + amount <= heap->capacity){
+		size_t old_fill = heap->filled;
+		heap->filled = heap->filled + amount;
+		return heap->data + old_fill;
+	}else{
+		return NULL;
+	}
 }
 
 
-//Reallocates more memory to DynMem object
-void Mem_Expand(DynMem* memory){
+void Heap_Debug(Heap* heap){
+	/*	Prints the heap information
+	 *	for debuging purposes
+	*/
+	printf("Heap Data: %lu\nHeap Filled: %lu\nHeap Capacity: %lu\n", heap->data, heap->filled, heap->capacity);
 
-    memory->data = Alloc_Expand(memory->data, (size_t)memory->size * 1.5);
-    if(memory->data != NULL){
-        memory->size = (size_t) memory->size * 1.5;
-    }
 }
 
 
-//Checks status of DynMem to see whats going on
 
-Mem_Status_Code Mem_Status(DynMem* memory){
-    if(memory->allocted >= (size_t) memory->size * 0.75){
-        return Mem_Full;
-    }else if (memory->allocted > memory->size) {
-        return Mem_OverFlow;
-    }else{
-        return Mem_Normal;
-    }
-}
+
+/* UNDEFINE MACROS */
+#undef  MemAlloc
+#undef  MemFree
+#undef  MemResize
