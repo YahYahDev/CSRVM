@@ -30,11 +30,16 @@ typedef struct{
 
 	size_t allocated;
 
+	size_t maxitems;
+
+	size_t items;
+
 }Heap;
 
 
 
 
+/* Heap managment functions */
 Heap Heap_Init(size_t size);
 
 
@@ -46,9 +51,14 @@ void Heap_Resize(Heap* heap, size_t size);
 
 void Heap_DeFrag(Heap* heap);
 
+
+
+/* Allocation functions */
 void* H_alloc(Heap* heap, size_t amount);
 
+
 void H_free(Heap* heap, void* ptr);
+
 
 void* H_realloc(Heap* heap, void* ptr, size_t amount);
 
