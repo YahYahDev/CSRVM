@@ -29,7 +29,7 @@ typedef struct Arena Arena;
 Arena* Arena_Init(size_t size);
 
 /* Arena_free frees the entire arena */
-void* Arena_Free(Arena* arena);
+void Arena_Free(Arena* arena);
 
 /* Arena_Expand attempts to expand arena limmits */
 void Arena_Expand(Arena* arena, size_t size);
@@ -39,5 +39,6 @@ void* A_alloc(Arena* arena, size_t size);
 
 /* A_free frees all alocation to the arena */
 void A_free(Arena* arena);
+
 
 #endif

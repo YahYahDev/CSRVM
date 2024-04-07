@@ -1,5 +1,6 @@
 #include "Arena.h"
 #include <stdio.h>
+#include <stdlib.h>
 /* TODO:
  *
  *  1): add a way to accese the last node in the linked list
@@ -85,18 +86,34 @@ void Add_Arena(Arena* arena){
 /* searches all arenas for a first fit to size
  */
 void* Handle_Full_Arena(Arena* arena, size_t amount){
-	/* TODO: Note this might loop for ever
-	 * if Add_Arena() fails every time
+
+	/* larger allocations are more likely to find enough space
+	 * further down the list so we check to see if they require
+	 * more than half of an arena to allocate said space so we can
+	 * traverse the list backwards
 	 */
-	for(Arena* node = arena; node->next_node != NULL; node = node->next_node){
-		/* checks for if allocation will fit then allocates
-		 */
-		if(node->ptr + amount <= node->capacity){
-			node->ptr = node->ptr + amount;
-			return node->data + node->ptr - amount; // return allocation pointer;
+	if(amount >= (size_t)arena->capacity / 2){
+		// travserse backwards
+		for(Arena* node = arena->last_node; node->head_node != NULL; node = node->head_node){
+			// fit check
+			if(node->ptr + amount <= node->capacity){
+				// allocate here
+				node->ptr = node->ptr + amount;
+				return node->data + node->ptr - amount;
+			}
+		}
+	}else{
+		// traverse forwards
+		for(Arena* node = arena; node->next_node != NULL; node = node->next_node){
+			// fit check
+			if(node->ptr + amount <= node->capacity){
+				// allocate here
+				node->ptr = node->ptr + amount;
+				return node->data + node->ptr - amount;
+			}
 		}
 	}
-	return NULL; // failed at allocating???
+	return NULL; // shouldnt happen but just in case return NULL for error
 }
 
 /* used to clean up any linked arenas allocated
@@ -155,13 +172,14 @@ void Arena_Expand(Arena* arena, size_t chunk_size){
 
 /* used to free the arena aka destroy it
  */
-void* Arena_Free(Arena* arena){
+void Arena_Free(Arena* arena){
 	Arena_CleanUp(arena);
-	if(arena->data == NULL || arena == NULL)
+	if(arena->data == NULL || arena == NULL)exit(EXIT_FAILURE);
 	_LibMemFree(arena->data);
 	arena->data = NULL;
 	_LibMemFree(arena);
 	arena = NULL;
+
 }
 
 
@@ -171,7 +189,6 @@ void* A_alloc(Arena* arena, size_t amount){
 
 	size_t mem = 0;
 	if(arena->ptr + amount <= arena->capacity){
-		RETRY:
 
 		mem = arena->ptr;
 		arena->ptr = arena->ptr + amount;
@@ -182,22 +199,21 @@ void* A_alloc(Arena* arena, size_t amount){
 		/* Handle Over Allocation */
 		Add_Arena(arena);
 		Arena_Expand(arena->last_node, amount);
-		perror("Failed to Allocate: Memory Chunk Too Small For Allocation");
 		return arena->last_node->data;
 	}else{
 		/* Handle Chain Allocation */
-		Retry_Chain:;
+		Retry_Alloc:; // used to retry after adding an arena
 
+		// try to allocate from a pre existing arena
 		void* data = Handle_Full_Arena(arena, amount);
 
-		if(data != NULL){
-			return data;
-		}else{
+		if(data == NULL){ // failed to find arena with a fit make a new one
 			Add_Arena(arena);
-			goto Retry_Chain;
+			goto Retry_Alloc;
 		}
-
+		return data;
 	}
+	printf("Failed Allocation Returning NULL\n");
 	return NULL;
 }
 
@@ -216,3 +232,4 @@ void A_free(Arena* arena){
 	arena->ptr = 0;
 
 }
+
