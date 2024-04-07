@@ -1,5 +1,4 @@
 #include "Arena.h"
-#include <stdio.h>
 #include <stdlib.h>
 /* TODO:
  *
@@ -213,7 +212,6 @@ void* A_alloc(Arena* arena, size_t amount){
 		}
 		return data;
 	}
-	printf("Failed Allocation Returning NULL\n");
 	return NULL;
 }
 
@@ -226,10 +224,9 @@ void* A_alloc(Arena* arena, size_t amount){
 void A_free(Arena* arena){
 
 	size_t regions = Arena_CleanUp(arena);
-
-	Arena_Expand(arena, arena->capacity * (size_t) regions * 0.75);
-
+	if(regions != 0){
+	Arena_Expand(arena, arena->capacity * regions);
+	}
 	arena->ptr = 0;
-
 }
 
