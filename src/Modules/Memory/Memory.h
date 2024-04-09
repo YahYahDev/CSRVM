@@ -6,6 +6,7 @@
 
 
 
+/* Macros for internal memory allocator allocations */
 #define _LibMemAlloc(size) malloc(size);
 
 
@@ -17,13 +18,15 @@
 
 
 
-typedef struct{
+/* Macros for external api allocations */
+#define M_alloc(size) malloc(size);
 
-	void* data;
 
-	size_t capacity;
+#define M_free(ptr) free(ptr);
 
-}_Mem_Chunk;
+
+#define M_realloc(ptr, size) realloc(ptr, size);
+
 
 
 
