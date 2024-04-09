@@ -4,16 +4,16 @@
 
 #include "../Memory/Memory.h"
 
-/*	Arena.h
+/* Arena.h
  *
- *	a simple bumb allocator arena
- *	with low overhead
+ *   An arena allocator:
  *
+ *     functions that start with Arena_ are used to
+ *     manage the arena its self
  *
- *	any function that has Arena_ is used
- *	to manage the actual arena so
- *	Arena_Free(&arena); would destroy the arena
- *	entirly not just reset it
+ *     functions that start with A_ are used for allocating
+ *
+ *     automaticly resizes the arena as more memory is required
 */
 
 
