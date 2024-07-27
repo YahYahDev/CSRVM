@@ -164,7 +164,7 @@ size_t Arena_CleanUp(Arena* arena){
  */
 void Arena_Expand(Arena* arena, size_t chunk_size){
 	arena->data = _LibMemRealloc(arena->data, chunk_size);
-
+    
 	if(arena->data == NULL) exit(1);
 }
 
@@ -215,7 +215,7 @@ void* A_alloc(Arena* arena, size_t amount){
 	return NULL;
 }
 
-/* deletes all data in the data
+/* deletes all data in the arena
  *
  *   resizes arena size based on
  *   how many arenas allocated before
@@ -229,4 +229,5 @@ void A_free(Arena* arena){
 	}
 	arena->ptr = 0;
 }
+
 

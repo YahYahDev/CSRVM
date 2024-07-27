@@ -1,0 +1,13 @@
+TODO:
+
+
+	1): Make heap allocator???
+			*no use malloc for now*
+
+	2): Make stack and instruction set?
+			?generic stack?
+
+	3): Make string module for future assembler/compiler
+			?similar system to SDS?
+			?similar api to my lua string lib?
+
